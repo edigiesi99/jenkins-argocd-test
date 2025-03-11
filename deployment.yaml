@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: base-app
+  namespace: test-evc
+  labels:
+    app: base-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: base-app
+  template:
+    metadata:
+      labels:
+        app: base-app
+    spec:
+      containers:
+      - name: base-app-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80
