@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: base-app
-  namespace: test-evc
+  namespace: test-env
   labels:
     app: base-app
 spec:
