@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: base-app
+  name: base-app3
   namespace: test-env
   labels:
     app: base-app
