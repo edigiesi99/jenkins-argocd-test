@@ -1,73 +1,34 @@
-//node {
-//    def app
-//    
-//    stage('Clone repository') {
-//      
-//
-//        checkout scm
-//    }
-//
-//    stage('Build image') {
-//  
-//       app = docker.build("edi527/jenkins-test")
-//    }
-//
-//    stage('Test image') {
-//  
-//
-//        app.inside {
-//            sh 'echo "Tests passed"'
-//        }
-//    }
-//
-//    stage('Push image') {
-//        
-//        docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-//            app.push("${env.BUILD_NUMBER}")
-//        }
-//    }
-//    
-//    stage('Trigger ManifestUpdate') {
-//                echo "triggering updatemanifestjob"
-//                build job: 'updatemanifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
-//        }
-//}
-
 node {
     def app
-
+    
     stage('Clone repository') {
+      
+
         checkout scm
     }
 
     stage('Build image') {
-        // Esegui il build della Docker image all'interno di un container con Docker CLI
-        docker.image('docker:latest').inside("-v /var/run/docker.sock:/var/run/docker.sock -v ${env.WORKSPACE}:${env.WORKSPACE}") {
-            // Assicurati che il Dockerfile sia nella root del workspace oppure specifica il percorso corretto
-            app = docker.build("edi527/jenkins-test", "${env.WORKSPACE}")
-        }
+  
+       app = docker.build("edi527/jenkins-test")
     }
 
     stage('Test image') {
-        // Esegui i test all'interno del container con Docker CLI e poi all'interno dell'immagine appena buildata
-        docker.image('docker:latest').inside("-v /var/run/docker.sock:/var/run/docker.sock -v ${env.WORKSPACE}:${env.WORKSPACE}") {
-            app.inside {
-                sh 'echo "Tests passed"'
-            }
+  
+
+        app.inside {
+            sh 'echo "Tests passed"'
         }
     }
 
     stage('Push image') {
-        // Esegui il push sempre all'interno del container con Docker CLI
-        docker.image('docker:latest').inside("-v /var/run/docker.sock:/var/run/docker.sock -v ${env.WORKSPACE}:${env.WORKSPACE}") {
-            docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
-                app.push("${env.BUILD_NUMBER}")
-            }
+        
+        docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+            app.push("${env.BUILD_NUMBER}")
         }
     }
-
+    
     stage('Trigger ManifestUpdate') {
-        echo "triggering updatemanifestjob"
-        build job: 'updatemanifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
-    }
+                echo "triggering updatemanifestjob"
+                build job: 'updatemanifest', parameters: [string(name: 'DOCKERTAG', value: env.BUILD_NUMBER)]
+        }
 }
