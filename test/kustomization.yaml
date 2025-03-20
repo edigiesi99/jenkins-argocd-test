@@ -4,4 +4,4 @@ kind: Kustomization
 namespace: argocd
 
 resources:
-#- k8/deployment.yaml
+- k8/deployment.yaml
